@@ -140,6 +140,22 @@ class AgentApp:
             content={"text": text},
         )
 
+        # 二次确认 / 取消
+        if self.handle_confirm_or_cancel(open_id=open_id, chat_id=chat_id, text=text):
+            return
+
+        # Shell 命令
+        mode, command = self.parse_shell_command(text)
+        if mode:
+            self.create_shell_task(
+                open_id=open_id,
+                chat_id=chat_id,
+                raw_text=text,
+                command=command,
+                mode=mode,
+            )
+            return
+
         if text == "/ping":
             self.reply(chat_id, "pong", open_id=open_id, message_id=message_id)
             return
