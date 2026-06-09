@@ -3,6 +3,12 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 
 
+def str_bool(value: str, default: bool = False) -> bool:
+    if value is None:
+        return default
+    return value.strip().lower() in ("1", "true", "yes", "y", "on")
+
+
 @dataclass
 class Config:
     lark_app_id: str
@@ -17,6 +23,18 @@ class Config:
     log_level: str
 
     lark_text_chunk_size: int
+
+    default_shell_mode: str
+    default_shell_timeout: int
+    max_shell_timeout: int
+    docker_image: str
+    sandbox_network: str
+
+    enable_host_mode: bool
+    host_mode_require_confirm: bool
+    confirm_expire_seconds: int
+
+    enable_command_blacklist: bool
 
 
 def load_config() -> Config:
@@ -37,4 +55,16 @@ def load_config() -> Config:
         log_level=os.getenv("LOG_LEVEL", "INFO"),
 
         lark_text_chunk_size=int(os.getenv("LARK_TEXT_CHUNK_SIZE", "3000")),
+
+        default_shell_mode=os.getenv("DEFAULT_SHELL_MODE", "sandbox"),
+        default_shell_timeout=int(os.getenv("DEFAULT_SHELL_TIMEOUT", "10")),
+        max_shell_timeout=int(os.getenv("MAX_SHELL_TIMEOUT", "120")),
+        docker_image=os.getenv("DOCKER_IMAGE", "alpine:latest"),
+        sandbox_network=os.getenv("SANDBOX_NETWORK", "none"),
+
+        enable_host_mode=str_bool(os.getenv("ENABLE_HOST_MODE", "true"), True),
+        host_mode_require_confirm=str_bool(os.getenv("HOST_MODE_REQUIRE_CONFIRM", "true"), True),
+        confirm_expire_seconds=int(os.getenv("CONFIRM_EXPIRE_SECONDS", "300")),
+
+        enable_command_blacklist=str_bool(os.getenv("ENABLE_COMMAND_BLACKLIST", "true"), True),
     )
