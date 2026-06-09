@@ -1,0 +1,18 @@
+[Unit]
+Description=PS Lark Ops Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ps-agent
+ExecStart=/opt/ps-agent/.venv/bin/python /opt/ps-agent/main.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+# 简单安全限制，后续 Phase 2 host mode 时再调整
+NoNewPrivileges=false
+
+[Install]
+WantedBy=multi-user.target
